@@ -37,10 +37,11 @@ def add_or_update_user(username):
 
         for tweet in tweets:
             tweet_vector = vectorize_tweet(tweet["full_text"])
-            db_tweet = Tweet(
+            tweet_id = tweet["id"]
+            db_tweet = (Tweet.query.get(tweet_id)) or Tweet(
                 id=tweet["id"], text=tweet["full_text"], vect=tweet_vector)
             db_user.tweets.append(db_tweet)
-        DB.session.add(db_tweet)
+            DB.session.add(db_tweet)
 
     except Exception as e:
         print("Error processing {}: {}".format(username, e))
