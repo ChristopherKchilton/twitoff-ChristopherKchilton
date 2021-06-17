@@ -105,17 +105,21 @@ from flask import Flask, render_template, request
 from .twitter import add_or_update_user
 from .predict import predict_user
 from .models import DB, User, Tweet
+
+
 def create_app():
     # initilizes our application
     app = Flask(__name__)
     app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URI")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     DB.init_app(app)
+
     @app.route("/")
     def root():
         """This will be presented when we visit '<BASE_URL>/ '"""
         users = User.query.all()  # SQL equivalent: `SELECT * FROM user;`
         return render_template("base.html", title='Home', users=users)
+
     @app.route("/compare", methods=["POST"])
     def compare():
         """This will be presented when we visit '<BASE_URL>/compare '"""
@@ -132,6 +136,7 @@ def create_app():
                 user0 if prediction else user1
             )
         return render_template("prediction.html", title="prediction", message=message)
+
     @app.route("/user", methods=["POST"])
     @app.route("/user/<name>", methods=["GET"])
     def user(name=None, message=''):
@@ -147,6 +152,7 @@ def create_app():
             tweets = []
         return render_template("user.html", title=name,
                                tweets=tweets, message=message)
+
     @app.route("/reset")
     def reset():
         """This will be presented when we visit '<BASE_URL>/reset '"""
@@ -154,6 +160,7 @@ def create_app():
         DB.create_all()
         users = User.query.all()  # SQL equivalent: `SELECT * FROM user;`
         return render_template("base.html", title='Home', users=users)
+
     @app.route("/update")
     def update():
         """This will be presented when we visit '<BASE_URL>/update '"""
